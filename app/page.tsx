@@ -1,101 +1,318 @@
-import Image from "next/image";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// app/page.tsx
+'use client'
+
+import { useState } from 'react'
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from '@/hooks/use-toast'
+import { 
+  Code2,
+  Cloud,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Container,
+  Server,
+  Settings,
+  Layout,
+  Laptop,
+  Network
+} from 'lucide-react'
+import { applicationSchema, type ApplicationForm } from "@/lib/validations/apply"
+
+const TechStack = () => (
+  <div className="flex flex-wrap justify-center items-center gap-12 text-gray-600">
+    {[
+      { icon: <Code2 size={24} />, name: "Next.js" },
+      { icon: <Layout size={24} />, name: "React" },
+      { icon: <Server size={24} />, name: "Node.js" },
+      { icon: <Settings size={24} />, name: "TypeScript" },
+      { icon: <Container size={24} />, name: "Docker" },
+      { icon: <Cloud size={24} />, name: "AWS" },
+    ].map((tech, i) => (
+      <div key={i} className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+        {tech.icon}
+        <span className="font-semibold">{tech.name}</span>
+      </div>
+    ))}
+  </div>
+)
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const { toast } = useToast()
+  
+  const form = useForm<ApplicationForm>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      github: "",
+      skills: "",
+      message: ""
+    }
+  })
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const onSubmit = async (data: ApplicationForm) => {
+    try {
+      const response = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Application Submitted Successfully",
+          description: "We'll get back to you soon!",
+        })
+        setDialogOpen(false)
+        form.reset()
+      } else {
+        throw new Error('Failed to submit')
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit application. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-blue-500/[0.025] -z-10" />
+        <div className="container mx-auto px-4 pt-20 pb-32">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+            <Globe className="w-24 h-24 text-blue-600 mb-8" />
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 font-geist-sans">
+              We don&apos;t just code,
+              <span className="text-pink-500"> we nail it.</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl">
+              Transforming ideas into powerful solutions with cutting-edge technology and unmatched expertise.
+            </p>
+            <div className="flex gap-4">
+              <Button size="lg" className="text-lg px-8">
+                Get Started
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8">
+                Learn More
+              </Button>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+        {/* Tech Stack Banner */}
+        <div className="w-full bg-white/50 backdrop-blur-sm border-y border-gray-200 py-8">
+          <div className="container mx-auto">
+            <TechStack />
+          </div>
+        </div>
+      </div>
+
+      {/* Services Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Our Expertise</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Network className="w-8 h-8" />,
+                title: 'Full Stack Development',
+                description: 'End-to-end solutions using Next.js, React, and Node.js with TypeScript for robust, scalable applications.',
+              },
+              {
+                icon: <Cloud className="w-8 h-8" />,
+                title: 'DevOps & Cloud',
+                description: 'Seamless deployment and scaling with Docker and AWS, ensuring high availability and performance.',
+              },
+              {
+                icon: <Laptop className="w-8 h-8" />,
+                title: 'Technical Consulting',
+                description: 'Expert guidance on architecture, tech stack selection, and digital transformation strategies.',
+              }
+            ].map((service, index) => (
+              <Card key={index} className="group hover:border-blue-500 transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="mb-4 text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                    {service.icon}
+                  </div>
+                  <h3 className="font-bold mb-2">{service.title}</h3>
+                  <p className="text-sm text-gray-600">{service.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Internship Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Join Our Team</h2>
+            <p className="text-gray-600 mb-8">
+              We&apos;re looking for passionate developers to join our internship program.
+              Work on cutting-edge projects and learn from industry experts.
+            </p>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg">Apply Now</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Internship Application</DialogTitle>
+                  <DialogDescription>
+                    Join our team of innovators shaping the future of technology.
+                  </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2 md:col-span-1">
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2 md:col-span-1">
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="email" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2 md:col-span-1">
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="tel" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="github"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2 md:col-span-1">
+                          <FormLabel>GitHub Profile</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://github.com/username" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="skills"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2">
+                          <FormLabel>Technical Skills</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="e.g., React, Node.js, TypeScript" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem className="col-span-2">
+                          <FormLabel>Why do you want to join us?</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} className="h-24" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? 'Submitting...' : 'Submit Application'}
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
+          <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+            <div className="flex items-center gap-2">
+              <Mail className="text-blue-600" />
+              <a href="mailto:nailtechrw@gmail.com" className="hover:text-blue-600">
+                nailtechrw@gmail.com
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <Phone className="text-blue-600" />
+              <a href="tel:+250781733332" className="hover:text-blue-600">
+                +250 781 733 332
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="text-blue-600" />
+              <span>Norrsken, Kigali-Rwanda</span>
+            </div>
+            <Button size="lg" className="mt-4" asChild>
+              <a href="mailto:nailtechrw@gmail.com">
+                Get Started
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
 }
