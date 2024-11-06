@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from '@/hooks/use-toast'
-import { 
+import {
   Code2,
   Cloud,
   Mail,
@@ -41,6 +41,8 @@ import {
   Network
 } from 'lucide-react'
 import { applicationSchema, type ApplicationForm } from "@/lib/validations/apply"
+import Image from 'next/image'
+import { useScrollToSection } from '@/hooks/useScrollToSection'
 
 const TechStack = () => (
   <div className="flex flex-wrap justify-center items-center gap-12 text-gray-600">
@@ -63,7 +65,7 @@ const TechStack = () => (
 export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { toast } = useToast()
-  
+
   const form = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -103,42 +105,134 @@ export default function Home() {
     }
   }
 
+  const scrollToSection = useScrollToSection()
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-blue-500/[0.025] -z-10" />
-        <div className="container mx-auto px-4 pt-20 pb-32">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            <Globe className="w-24 h-24 text-blue-600 mb-8" />
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 font-geist-sans">
-              We don&apos;t just code,
-              <span className="text-pink-500"> we nail it.</span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl">
-              Transforming ideas into powerful solutions with cutting-edge technology and unmatched expertise.
-            </p>
-            <div className="flex gap-4">
-              <Button size="lg" className="text-lg px-8">
-                Get Started
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
-                Learn More
+
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-gray-100 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo and Company Name */}
+            <div className="flex items-center gap-3">
+              <div className="relative w-8 h-8">
+                <Image
+                  src="/logo.webp"
+                  alt="Nail Tech Logo"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                  priority
+                />
+              </div>
+              <span className="font-bold text-gray-900">Nail Tech</span>
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="hidden md:flex items-center gap-8">
+              {[
+                { name: 'Services', id: 'services' },
+                // { name: 'Expertise', id: 'expertise' },
+                { name: 'Join Us', id: 'careers' },
+                { name: 'Contact', id: 'contact' },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="text-sm text-gray-600 hover:text-pink-500 transition-colors font-medium"
+                >
+                  {item.name}
+                </button>
+              ))}
+            </nav>
+
+            {/* Contact Info */}
+            <div className="hidden lg:flex items-center gap-4 text-sm">
+              <a
+                href="tel:+250781733332"
+                className="flex items-center gap-2 text-gray-600 hover:text-pink-500 transition-colors"
+              >
+                <Phone className="h-4 w-4" />
+                <span>+250 781 733 332</span>
+              </a>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Button variant="ghost" size="icon" asChild>
+                <a href="tel:+250781733332">
+                  <Phone className="h-5 w-5" />
+                </a>
               </Button>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Tech Stack Banner */}
-        <div className="w-full bg-white/50 backdrop-blur-sm border-y border-gray-200 py-8">
-          <div className="container mx-auto">
-            <TechStack />
+      {/* Hero Section */}
+      <div id="home" className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-blue-500/[0.025] -z-10" />
+        <div className="container mx-auto px-4 pt-20 pb-32">
+          <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
+            {/* Logo with better aspect ratio */}
+            <div className="relative w-[200px] h-[100px] mb-8">
+              <Image
+                src="/logo.webp"
+                alt="Nail Tech Logo"
+                fill
+                style={{ objectFit: 'contain' }}
+                priority
+                className="drop-shadow-lg"
+              />
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 font-geist-sans leading-tight">
+              We don&apos;t just code,
+              <span className="text-pink-500"> we nail it.</span>
+            </h1>
+
+            {/* Enhanced Description */}
+            <p className="text-xl text-gray-600 mb-12 max-w-3xl leading-relaxed">
+              We transform complex business challenges into elegant digital solutions.
+              Specializing in enterprise-grade software development, cloud architecture,
+              and cutting-edge web applications that drive real business growth.
+            </p>
+
+
+            {/* CEO Section */}
+            <div className="flex items-center justify-center gap-8 mt-8 bg-white/50 backdrop-blur-sm p-8 rounded-lg border border-gray-100">
+              <div className="relative w-32 h-32">
+                <Image
+                  src="/david.jpg"
+                  alt="Mr. David - CEO"
+                  width={200}
+                  height={200}
+                  className="rounded-full mx-auto mb-8"
+                />
+              </div>
+              <div className="text-left">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Mr. David</h3>
+                <p className="text-gray-600 mb-2">Founder & CEO</p>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://programmerdatch.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-pink-500 hover:text-pink-600 flex items-center gap-2"
+                  >
+                    <Globe className="h-4 w-4" />
+                    programmerdatch.com
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Services Section */}
-      <section className="py-20 bg-white">
+      <section id="services" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Our Expertise</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -174,7 +268,7 @@ export default function Home() {
       </section>
 
       {/* Internship Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
+      <section id="careers" className="py-20 bg-gradient-to-br from-blue-50 to-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">Join Our Team</h2>
@@ -285,7 +379,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 bg-white">
+      <section id="contact" className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
           <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
@@ -307,7 +401,7 @@ export default function Home() {
             </div>
             <Button size="lg" className="mt-4" asChild>
               <a href="mailto:nailtechrw@gmail.com">
-                Get Started
+                Contact us Now
               </a>
             </Button>
           </div>
