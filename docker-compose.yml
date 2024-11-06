@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  nailtech-portfolio:
+    container_name: nailtech-portfolio
+    # image: ghcr.io/programmerdatch/nailtech-portfolio:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 7013:3000
+    networks:
+      - nailtech-portfolio-network
+
+networks:
+  nailtech-portfolio-network:
+    driver: bridge
